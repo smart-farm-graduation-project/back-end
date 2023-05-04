@@ -6,6 +6,8 @@ import com.farm.smartfarm.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,10 +23,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class UserViewer {
-//    private final UserRepository userRepository;
     private final UserController userController;
     private final String FALSE = "false";
 
+    private final PwEncryption pwEncryption;
     // 이름과 핸드폰 번호 받아오기
     @PostMapping("/get-id")
     public String getData(String name, String phoneNum) {
@@ -42,11 +44,24 @@ public class UserViewer {
     @PostMapping("/register")
     public boolean createUser(String name, String id, String pw, String phoneNum, String email) {
 //        UserController userController = new UserController(userRepository);
-        boolean res = userController.createUser(new FarmUser(name, id, pw, phoneNum, email));
+        String encryptPw = pwEncryption.encodeBCryptPw(pw);
+        boolean res = userController.createUser(new FarmUser(name, id, encryptPw, phoneNum, email));
         if (res) return true;
         return false;
     }
 
+    @PostMapping("/auth/login")
+    public boolean checkLogin(String id, String pw) {
+//        String encryptPw = passwordEncoder.encode(pw);
+//        return userController.checkUser(id, encryptPw);
+        return userController.checkUser(id, pw);
+    }
+
+    @PostMapping("/set-password")
+    public String setPassword(String id, String pw) {
+        String res = userController.setPassword(id, pw);
+        return res;
+    }
     @GetMapping("/test")
     public String test() {
         return "test check";

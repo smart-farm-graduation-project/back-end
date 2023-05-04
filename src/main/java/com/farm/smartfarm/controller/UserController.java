@@ -2,21 +2,26 @@ package com.farm.smartfarm.controller;
 
 import com.farm.smartfarm.model.FarmUser;
 import com.farm.smartfarm.model.UserRepository;
+import com.farm.smartfarm.viewer.PwEncryption;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserController {
     //ORM Interface
     private final UserRepository userRepository;
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final PwEncryption pwEncryption;
+//    public UserController(UserRepository userRepository, PwEncryption pwEncryption) {
+//        this.userRepository = userRepository;
+//        this.pwEncryption = pwEncryption;
+//    }
     // new user
     public boolean createUser (FarmUser newUser) {
         try{
@@ -38,5 +43,28 @@ public class UserController {
                 return user.getId();
         }
         return null;
+    }
+
+    public boolean checkUser (String id, String pw) {
+        Optional<FarmUser> user = userRepository.findById(id);
+        log.info(pw + "   " + user.get().getPw());
+        if (user.isPresent()) {
+//            boolean res = (pw.equals(user.get().getPw())) ? true : false;
+            boolean res = pwEncryption.matchBCryptPw(pw,user.get().getPw());
+            return res;
+        }
+        return false;
+    }
+
+    public String setPassword(String id, String pw) {
+        Optional<FarmUser> user = userRepository.findById(id);
+        if(user.isPresent()) {
+            String encryptPw = pwEncryption.encodeBCryptPw(pw);
+            FarmUser modifyUser = user.get();
+            modifyUser.setPw(encryptPw);
+            userRepository.save(modifyUser);
+            return "성공적으로 변경하였습니다.";
+        }
+        return "wrong id";
     }
 }
