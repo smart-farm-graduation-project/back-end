@@ -52,6 +52,7 @@ public class UserViewer {
 
     @PostMapping("/auth/login")
     public boolean checkLogin(String id, String pw) {
+        log.info("try login-"+id + "\t" + pw);
 //        String encryptPw = passwordEncoder.encode(pw);
 //        return userController.checkUser(id, encryptPw);
         return userController.checkUser(id, pw);

@@ -45,17 +45,20 @@ public class UserController {
         return null;
     }
 
+    // login check
     public boolean checkUser (String id, String pw) {
         Optional<FarmUser> user = userRepository.findById(id);
-        log.info(pw + "   " + user.get().getPw());
         if (user.isPresent()) {
+            log.info(pw + "   " + user.get().getPw());
 //            boolean res = (pw.equals(user.get().getPw())) ? true : false;
             boolean res = pwEncryption.matchBCryptPw(pw,user.get().getPw());
             return res;
         }
+        log.info("Not exist");
         return false;
     }
 
+    // change pw
     public String setPassword(String id, String pw) {
         Optional<FarmUser> user = userRepository.findById(id);
         if(user.isPresent()) {
