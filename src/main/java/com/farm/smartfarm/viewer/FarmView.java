@@ -1,13 +1,14 @@
 package com.farm.smartfarm.viewer;
 
 import com.farm.smartfarm.controller.FarmController;
+import com.farm.smartfarm.socektConnect.ChatController;
+import com.farm.smartfarm.socektConnect.Message;
+import com.farm.smartfarm.socektConnect.ChatRoom;
 import com.farm.smartfarm.model.FarmData;
+import com.farm.smartfarm.socektConnect.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,8 @@ import java.util.ArrayList;
 @Slf4j
 public class FarmView {
     private final FarmController farmController;
-
+    private final ChatService chatService;
+    private final ChatController chatController;
     @GetMapping("/insert-data")
     public void insertData(String data) {
         if(data.isEmpty()) {
@@ -60,5 +62,25 @@ public class FarmView {
             return data;
         }
         return data;
+    }
+
+    @PostMapping("/create-room")
+    public ChatRoom createRoom(String farmNum) {
+        return chatService.createRoom(farmNum);
+    }
+
+//    @GetMapping("/find-chat-room")
+//    public List<ChatRoom> findAllRoom() {
+//        return chatService.findAllRoom();
+//    }
+
+    @PostMapping("/control/water")
+    public void controlWater(@RequestBody Message message) {
+        chatController.message(message);
+//        ChatRoom roomId = chatService.findRoomById(farmNum);
+//        chatService.sendMessage();
+//        chatService.message(message);
+//        String res = "";
+//        return res;
     }
 }

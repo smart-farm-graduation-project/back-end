@@ -45,6 +45,10 @@ public class UserController {
         return null;
     }
 
+    public boolean duplicatedId (String id) {
+        return userRepository.existsById(id);
+    }
+
     // login check
     public boolean checkUser (String id, String pw) {
         Optional<FarmUser> user = userRepository.findById(id);
@@ -69,5 +73,11 @@ public class UserController {
             return "성공적으로 변경하였습니다.";
         }
         return "wrong id";
+    }
+
+//    get User Info
+    public FarmUser getUserInfo(String id) {
+        FarmUser userInfo = userRepository.findById(id).get();
+        return userInfo;
     }
 }

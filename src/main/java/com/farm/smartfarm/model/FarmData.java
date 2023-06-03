@@ -14,6 +14,7 @@ import java.sql.Date;
 @Entity
 public class FarmData {
     @Id
+    @GeneratedValue
     private int id;
     @Column
     private String sensorName;

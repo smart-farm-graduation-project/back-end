@@ -2,22 +2,18 @@ package com.farm.smartfarm.viewer;
 
 import com.farm.smartfarm.controller.UserController;
 import com.farm.smartfarm.model.FarmUser;
-import com.farm.smartfarm.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /*
 * user controller
 * user check, user register, search user's id and pw
 */
 
+@CrossOrigin("http://127.0.0.1:3000")
 @RestController
 @RequestMapping("user")
 @RequiredArgsConstructor
@@ -42,25 +38,40 @@ public class UserViewer {
     }
 
     @PostMapping("/register")
-    public boolean createUser(String name, String id, String pw, String phoneNum, String email) {
-//        UserController userController = new UserController(userRepository);
-        String encryptPw = pwEncryption.encodeBCryptPw(pw);
-        boolean res = userController.createUser(new FarmUser(name, id, encryptPw, phoneNum, email));
+    public boolean createUser(@RequestBody FarmUser farmUser) {
+        log.info("register - " + farmUser.toString());
+//        if(farmUser.getId()) return false;
+        farmUser.setPw(pwEncryption.encodeBCryptPw(farmUser.getPw()));
+        boolean res = userController.createUser(farmUser);
         if (res) return true;
         return false;
     }
 
     @PostMapping("/auth/login")
-    public boolean checkLogin(String id, String pw) {
-        log.info("try login-"+id + "\t" + pw);
+    public boolean checkLogin(@RequestBody HashMap<String, String> user) {
+        log.info("try login-"+user.get("id") + "\t" + user.get("pw"));
 //        String encryptPw = passwordEncoder.encode(pw);
 //        return userController.checkUser(id, encryptPw);
-        return userController.checkUser(id, pw);
+        return userController.checkUser(user.get("id"), user.get("pw"));
     }
 
-    @PostMapping("/set-password")
-    public String setPassword(String id, String pw) {
-        String res = userController.setPassword(id, pw);
+    @PostMapping("/auth/set-password")
+    public String setPassword(@RequestBody HashMap<String, String> user) {
+        log.info("try login-"+user.get("id") + "\t" + user.get("pw"));
+        // modify password
+        String res = userController.setPassword(user.get("id"), user.get("pw"));
+        return res;
+    }
+
+    @GetMapping("/check-dup")
+    public boolean checkDuplicate(String id) {
+        return userController.duplicatedId(id);
+    }
+
+    @GetMapping("/get-info")
+    public FarmUser getUserInfo(String id) {
+//        get User Info
+        FarmUser res = userController.getUserInfo(id);
         return res;
     }
     @GetMapping("/test")

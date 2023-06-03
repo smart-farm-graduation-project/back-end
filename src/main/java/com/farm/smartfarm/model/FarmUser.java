@@ -6,9 +6,9 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class FarmUser {
     @Column(columnDefinition = "varchar(16) not null")
     private String name;

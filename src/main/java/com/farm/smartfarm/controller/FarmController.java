@@ -28,7 +28,7 @@ public class FarmController {
 
     // insert sensor data
     public boolean insertSensorData(String data) {
-        // Data : time-sensorName-sensorData-user-farmId
+        // Data : time/sensorName/sensorData/user/farmId
         String[] tmp = data.split("/");
         int i = 0;
         try{
