@@ -23,4 +23,10 @@ public class Message {
 //    public void closeConnect() {
 //        this.type = "close";
 //    }
+
+    @Override
+    public String toString() {
+        String res = roomId + "-" + sender + "-" + message;
+        return res;
+    }
 }

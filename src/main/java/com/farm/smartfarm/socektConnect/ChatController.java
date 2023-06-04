@@ -5,8 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,14 +29,24 @@ public class ChatController {
 
     @MessageMapping(value = "/chat/message")
     public void message(Message message){
-        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
+        log.info(message.toString());
+        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message.toString());
     }
 
     @GetMapping("/send-message")
-    public String sendMessage(Message message) {
+    public String sendMessage(@RequestParam String roomId,
+                              @RequestParam String sender,
+                              @RequestParam String message) {
         // HTTP GET 요청 처리 로직
+//       if try fail parameter = Message msg
 //        Message message = "Hello, WebSocket!";
-        message(message); // WebSocket 메시지 처리 메소드 호출
+        log.info("message - " + roomId);
+        Message msg = Message.builder()
+                        .roomId(roomId)
+                                .sender(sender)
+                                        .message(message)
+                                                .build();
+        message(msg); // WebSocket 메시지 처리 메소드 호출
         return "Message sent";
     }
 
