@@ -1,6 +1,7 @@
 package com.farm.smartfarm.viewer;
 
 import com.farm.smartfarm.controller.FarmController;
+import com.farm.smartfarm.controller.StateControl;
 import com.farm.smartfarm.socektConnect.ChatController;
 import com.farm.smartfarm.socektConnect.Message;
 import com.farm.smartfarm.socektConnect.ChatRoom;
@@ -11,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("farm")
@@ -18,8 +20,9 @@ import java.util.ArrayList;
 @Slf4j
 public class FarmView {
     private final FarmController farmController;
-    private final ChatService chatService;
-    private final ChatController chatController;
+    private final StateControl stateControl;
+//    private final ChatService chatService;
+//    private final ChatController chatController;
     @GetMapping("/insert-data")
     public void insertData(String data) {
         if(data.isEmpty()) {
@@ -64,7 +67,34 @@ public class FarmView {
         return data;
     }
 
-    @PostMapping("/create-room")
+    @PostMapping("/control/water")
+    public boolean controlWater(@RequestBody HashMap<String, String> data) {
+        String farmNum = data.get("farmNum");
+        int waterAmount = Integer.parseInt(data.get("state"));
+        log.info("water - " + farmNum + " - " + waterAmount);
+        boolean res = stateControl.setWaterAmount(farmNum, waterAmount);
+        return res;
+    }
+
+    @PostMapping("/control/wind")
+    public boolean controlWind(@RequestBody HashMap<String, String> data) {
+        String farmNum = data.get("farmNum");
+        boolean state = Boolean.parseBoolean(data.get("state"));
+        log.info("wind - " + farmNum + " - " + state);
+        boolean res = stateControl.setWindLed("wind", farmNum, state);
+        return res;
+    }
+
+    @PostMapping("/control/led")
+    public boolean controlLed(@RequestBody HashMap<String, String> data) {
+        String farmNum = data.get("farmNum");
+        boolean state = Boolean.parseBoolean(data.get("state"));
+        log.info("led - " + farmNum + " - " + state);
+        boolean res = stateControl.setWindLed("led", farmNum, state);
+        return res;
+    }
+    // socket function
+    /*@PostMapping("/create-room")
     public ChatRoom createRoom(String farmNum) {
         return chatService.createRoom(farmNum);
     }
@@ -76,11 +106,12 @@ public class FarmView {
 
     @PostMapping("/control/water")
     public void controlWater(@RequestBody Message message) {
+        log.info("enter - " + message.getRoomId());
         chatController.message(message);
 //        ChatRoom roomId = chatService.findRoomById(farmNum);
 //        chatService.sendMessage();
 //        chatService.message(message);
 //        String res = "";
 //        return res;
-    }
+    }*/
 }
