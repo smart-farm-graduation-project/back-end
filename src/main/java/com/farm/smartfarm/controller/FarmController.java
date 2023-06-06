@@ -78,34 +78,39 @@ public class FarmController {
         return user;
     }
     // new smartFarm register
-    public boolean regiFarm (String user) {
-        String date = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME).toString().split("\\.")[0];
-        ArrayList<Farm> farm = (ArrayList<Farm>) farmInfoRepository.findAll(Sort.by(Sort.Direction.DESC, "farmNum"));
-        if (farm.isEmpty()) {
-            Farm first = new Farm();
-            first.setUser(user);
-            first.setStartDate(date);
-            String a = "0".repeat(8);
-            first.setFarmNum(a);
-            farmInfoRepository.save(first);
-            return true;
-        }
-        String beforeFarmNum = farm.get(0).getFarmNum();
-        BigInteger num = new BigInteger(beforeFarmNum);
-        num = num.add(BigInteger.ONE);
-        String farmNum = new Padding().padLeftZeros(num.toString(), 8);
-        Farm newInfo = new Farm();
-        newInfo.setStartDate(date);
-        newInfo.setUser(user);
-        newInfo.setFarmNum(farmNum);
-        farmInfoRepository.save(newInfo);
+    public boolean regiFarm (String user, String farmNum) {
+        Farm farm = new Farm();
+        farm.setFarmNum(farmNum);
+        farm.setUser(user);
+        farmInfoRepository.save(farm);
         return true;
+//        String date = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME).toString().split("\\.")[0];
+//        ArrayList<Farm> farm = (ArrayList<Farm>) farmInfoRepository.findAll(Sort.by(Sort.Direction.DESC, "farmNum"));
+//        if (farm.isEmpty()) {
+//            Farm first = new Farm();
+//            first.setUser(user);
+//            first.setStartDate(date);
+//            String a = "0".repeat(8);
+//            first.setFarmNum(a);
+//            farmInfoRepository.save(first);
+//            return true;
+//        }
+//        String beforeFarmNum = farm.get(0).getFarmNum();
+//        BigInteger num = new BigInteger(beforeFarmNum);
+//        num = num.add(BigInteger.ONE);
+//        String farmNum = new Padding().padLeftZeros(num.toString(), 8);
+//        Farm newInfo = new Farm();
+//        newInfo.setStartDate(date);
+//        newInfo.setUser(user);
+//        newInfo.setFarmNum(farmNum);
+//        farmInfoRepository.save(newInfo);
+//        return true;
     }
 
     // Farm data search (all data)
     public ArrayList<FarmData> searchFarmData(String user) {
         log.info("searchFarmData+" + user);
-        ArrayList<FarmData> datas = (ArrayList<FarmData>) farmDataRepository.findAll();
+        ArrayList<FarmData> datas = (ArrayList<FarmData>) farmDataRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
         if (datas.isEmpty()) {
             log.warn("data isn't exist");
             return datas;
@@ -135,6 +140,21 @@ public class FarmController {
             if((period.isAfter(start) && period.isBefore(end))
                 || period.isEqual(start) || period.isEqual(end)) {
                 res.add(data);
+            }
+        }
+        return res;
+    }
+
+    public ArrayList<Farm> getFarmList(String id) {
+        log.info("get farm list - " + id);
+        ArrayList<Farm> farms = (ArrayList<Farm>) farmInfoRepository.findAll();
+        if(farms.isEmpty()) {
+            return farms;
+        }
+        ArrayList<Farm> res = new ArrayList<>();
+        for (Farm farm : farms) {
+            if(farm.getUser().equals(id)) {
+                res.add(farm);
             }
         }
         return res;

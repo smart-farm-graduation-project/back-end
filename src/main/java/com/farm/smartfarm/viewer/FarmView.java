@@ -2,6 +2,7 @@ package com.farm.smartfarm.viewer;
 
 import com.farm.smartfarm.controller.FarmController;
 import com.farm.smartfarm.controller.StateControl;
+import com.farm.smartfarm.model.Farm;
 import com.farm.smartfarm.socektConnect.ChatController;
 import com.farm.smartfarm.socektConnect.Message;
 import com.farm.smartfarm.socektConnect.ChatRoom;
@@ -34,12 +35,12 @@ public class FarmView {
     }
 
     @PostMapping("/register-farm")
-    public boolean insertFarm(String id) {
-        log.info("regiFarm-"+id);
-        if(id.isEmpty()) {
+    public boolean insertFarm(@RequestBody HashMap<String, String> data) {
+        log.info("regiFarm-"+data.get("id"));
+        if(data.get("id").isEmpty() || data.get("farmNum").isEmpty()) {
             return false;
         }
-        farmController.regiFarm(id);
+        farmController.regiFarm(data.get("id"), data.get("farmNum"));
         return true;
     }
 
@@ -67,6 +68,12 @@ public class FarmView {
         return data;
     }
 
+    @GetMapping("/get-farm-list")
+    public ArrayList<Farm> getFarmList(String id) {
+        log.info("get Farm LIst - " + id);
+        ArrayList<Farm> farms = farmController.getFarmList(id);
+        return farms;
+    }
     @PostMapping("/control/water")
     public boolean controlWater(@RequestBody HashMap<String, String> data) {
         String farmNum = data.get("farmNum");
