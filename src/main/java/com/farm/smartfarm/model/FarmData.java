@@ -16,10 +16,20 @@ public class FarmData {
     @Id
     @GeneratedValue
     private int id;
+//    @Column
+//    private String sensorName;
+//    @Column
+//    private String sensorData;
     @Column
-    private String sensorName;
+    private String temperature;
     @Column
-    private String sensorData;
+    private String moisture;
+    @Column
+    private String co2;
+    @Column
+    private String groundMoisture;
+    @Column
+    private String fruitNum;
     @Column
     private String sensorDate;
     @Column
@@ -29,7 +39,7 @@ public class FarmData {
 
     @Override
     public String toString() {
-        String string = sensorData + "-" + sensorDate + "-" + sensorName + "-" + sensorUser + "-" + sensorUser;
+        String string = temperature + "-" + sensorDate + "-" + co2 + "-" + sensorUser + "-" + sensorUser;
         return string;
     }
 }

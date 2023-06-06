@@ -34,14 +34,19 @@ public class ChatController {
     }
 
     @GetMapping("/send-message")
-    public String sendMessage(@RequestParam String roomId,
+    public String sendMessage(@RequestParam String type,
+                              @RequestParam String roomId,
                               @RequestParam String sender,
                               @RequestParam String message) {
         // HTTP GET 요청 처리 로직
 //       if try fail parameter = Message msg
 //        Message message = "Hello, WebSocket!";
         log.info("message - " + roomId);
+//        if(type.equals("water")) {
+//            message = String.valueOf(Math.round(Integer.parseInt(message) * 1000 / 0.3));
+//        }
         Message msg = Message.builder()
+                .type(type)
                         .roomId(roomId)
                                 .sender(sender)
                                         .message(message)

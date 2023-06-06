@@ -27,7 +27,7 @@ public class FarmController {
     private final FarmRepository farmInfoRepository;
 
     // insert sensor data
-    public boolean insertSensorData(String data) {
+    public boolean insertSensorData(String data, String fruitNum, String farmNum) {
         // Data : time/sensorName/sensorData/user/farmId
         String[] tmp = data.split("/");
         int i = 0;
@@ -41,30 +41,42 @@ public class FarmController {
                         i += 1;
                         continue;
                     case 1:
-                        farmDataModel.setSensorName(type);
+                        farmDataModel.setTemperature(type);
                         i += 1;
                         continue;
                     case 2:
-                        farmDataModel.setSensorData(type);
+                        farmDataModel.setMoisture(type);
                         i += 1;
                         continue;
                     case 3:
-                        farmDataModel.setSensorUser(type);
+                        farmDataModel.setCo2(type);
                         i += 1;
                         continue;
                     case 4:
-                        farmDataModel.setFarmNum(type);
+                        farmDataModel.setGroundMoisture(type);
                         i += 1;
                 }
             }
+            farmDataModel.setFruitNum(fruitNum);
+            farmDataModel.setFarmNum(farmNum);
+            farmDataModel.setSensorUser(searchFarmUser(farmNum));
             log.info(farmDataModel.toString());
             farmDataRepository.save(farmDataModel);
             return true;
         } catch (Exception e){
+            e.printStackTrace();
             return false;
         }
     }
 
+    // search farm id
+    public String searchFarmUser(String farmNum) {
+        log.info("searchFarmUser - " + farmNum);
+        Optional<Farm> farmUser = farmInfoRepository.findById(farmNum);
+        String user = farmUser.get().getUser();
+        log.info(user);
+        return user;
+    }
     // new smartFarm register
     public boolean regiFarm (String user) {
         String date = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME).toString().split("\\.")[0];

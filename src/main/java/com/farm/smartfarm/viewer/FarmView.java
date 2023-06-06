@@ -24,13 +24,13 @@ public class FarmView {
 //    private final ChatService chatService;
 //    private final ChatController chatController;
     @GetMapping("/insert-data")
-    public void insertData(String data) {
+    public void insertData(String data, String fruitNum, String farmNum) {
         if(data.isEmpty()) {
             log.warn("data is empty");
             return;
         }
         log.info("arduinoData - " + data);
-        farmController.insertSensorData(data);
+        farmController.insertSensorData(data, fruitNum, farmNum);
     }
 
     @PostMapping("/register-farm")
@@ -48,7 +48,7 @@ public class FarmView {
         ArrayList<FarmData> data = farmController.searchFarmData(id);
         if (data.isEmpty()) {
             FarmData empty = new FarmData();
-            empty.setSensorName("Isn't data");
+            empty.setTemperature("Isn't data");
             data.add(empty);
             return data;
         }
@@ -60,7 +60,7 @@ public class FarmView {
         ArrayList<FarmData> data = farmController.searchFarmDataPeriod(startDate, endDate, id);
         if (data.isEmpty()) {
             FarmData empty = new FarmData();
-            empty.setSensorName("Isn't data");
+            empty.setTemperature("Isn't data");
             data.add(empty);
             return data;
         }

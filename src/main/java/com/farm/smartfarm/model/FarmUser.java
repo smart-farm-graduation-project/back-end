@@ -2,6 +2,7 @@ package com.farm.smartfarm.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Check;
 
 @Getter
 @Setter
@@ -13,11 +14,21 @@ public class FarmUser {
     @Column(columnDefinition = "varchar(16) not null")
     private String name;
     @Id
+    @Column(name = "user_id")
     private String id;
-    @Column(columnDefinition = "varchar(64) not null check(pw >= 8 and pw <= 64")
+
+//    varchar(64) not null check(char_length(pw) >= 8 and char_length(pw) <= 64
+    @Column(length = 64, nullable = false)
+    @Check(constraints = "char_length(pw) >= 8 and char_length(pw) <= 64")
     private String pw;
-    @Column(columnDefinition = "not null check(varchar(11) char_length(phoneNum) = 11)")
+
+//    "varchar(16) not null check(char_length(phoneNum) = 11)"
+    @Column(length = 64, nullable = false)
+    @Check(constraints = "check(char_length(phoneNum) = 11)")
     private String phoneNum;
-    @Column(columnDefinition = "constraint email_format check(email like'%@%.%')")
+
+//    constraint email_format check(email like'%@%.%')
+    @Column
+    @Check(constraints = "email like '%@%.%")
     private String email;
 }

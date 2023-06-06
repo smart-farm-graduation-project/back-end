@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 public class Message {
 
-//    private String type;
+    private String type;
     private String roomId;
     private String sender;
     private String message;
@@ -26,7 +26,7 @@ public class Message {
 
     @Override
     public String toString() {
-        String res = roomId + "-" + sender + "-" + message;
+        String res = type + "-" + roomId + "-" + sender + "-" + message;
         return res;
     }
 }
